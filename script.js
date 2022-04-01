@@ -36,8 +36,7 @@ let L1 = 44;
     L1 = item;
     tx.executeSql('INSERT INTO SEAT (seat_nr)  VALUES (' +L1+ ')', []);
     console.log(item, index);
-}); 
-
+});
 });
 
   localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
