@@ -1,8 +1,11 @@
 const container = document.querySelector('.container');
 const seats = document.querySelectorAll('.row .seat:not(.occupied)');
+const seatsFree = document.querySelectorAll('.row .seat:not(.reserved)');
 const count = document.getElementById('count');
 const total = document.getElementById('total');
 const movieSelect = document.getElementById('movie');
+
+const rows = document.getElementsByClassName("row")
 
 let dbb = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
 
@@ -48,6 +51,23 @@ let L1 = 44;
   
   setMovieData(movieSelect.selectedIndex, movieSelect.value);
 }
+function booking(){
+  const lname =  document.getElementById("lname").value;
+  const seatsFree = document.querySelectorAll('.row .seat:not(.reserved)');
+  seatsFree.forEach((seat, index) => {
+    if (seat.classList.contains('selected')) {
+      console.log(seat, index + "RESERVE !")
+      seat.classList.toggle("reserved");
+      const replaced = lname.replaceAll(' ', '_');
+      seat.classList.add(replaced);
+      console.log(lname);
+    }
+
+  });
+
+  updateSelectedCount();
+
+}
 
 // Get data from localstorage and populate UI
 function populateUI() {
@@ -76,10 +96,10 @@ function populateUI() {
 
   if (selectedSeats !== null && selectedSeats.length > 0) {
     seats.forEach((seat, index) => {
-    
+
 
       if (selectedSeats.indexOf(index) > -1) {
-          
+
         seat.classList.add('selected');
       }
     });
@@ -91,15 +111,18 @@ function populateUI() {
     movieSelect.selectedIndex = selectedMovieIndex;
   }
   setMovieData(movieSelect.selectedIndex, movieSelect.value);
+
+  const rows = document.getElementsByClassName("row")
+  for(let row of rows ){
+    let seattt  = row.children;
+    console.log(seattt.classList);
+  }
 }
 
 // Movie select event
 movieSelect.addEventListener('change', e => {
   ticketPrice = +e.target.value;
   setMovieData(e.target.selectedIndex, e.target.value);
-
-
-  
   updateSelectedCount();
 });
 
@@ -110,9 +133,34 @@ container.addEventListener('click', e => {
     !e.target.classList.contains('occupied')
   ) {
     e.target.classList.toggle('selected');
-    
-
     updateSelectedCount();
-      console.log("LOL " + e.target.selectedIndex, e.target.value);
+      console.log("SELECTED!");
+  }
+  if (
+      e.target.classList.contains('reserved') &&
+      !e.target.classList.contains('occupied')
+  ) {
+    e.target.classList.toggle(e.target.classList.item(2))
+    e.target.classList.toggle('reserved');
+    updateSelectedCount();
+    console.log("Reservation undo!");
+  }
+});
+container.addEventListener('mouseover', e => {
+    const tooltiptext =  document.getElementsByClassName("tooltiptext");
+    const rows = document.getElementsByClassName("row")
+
+  for (let tool of tooltiptext) {
+      for(let row of rows ){
+      }
+
+      if (e.target.classList.length > 3){
+      tool.innerText =e.target.classList.item(3);
+    }
+      else{
+        tool.innerText ="";
+      }
+    console.log(e.target.classList.item(3) + "mouseenter");
+
   }
 });

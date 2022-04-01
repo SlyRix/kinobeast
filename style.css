@@ -55,6 +55,33 @@ body {
 .seat.occupied {
   background-color: #fff;
 }
+.seat.reserved {
+  background-color: #ff8b8b;
+}
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+.row .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  height: 10px;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: relative;
+  top: 0px;
+  right: 0px;
+
+}
+
+.row:hover .tooltiptext {
+  visibility: visible;
+}
 
 .seat:nth-of-type() {
   margin-right: 18px;
