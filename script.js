@@ -103,6 +103,7 @@ function populateUI() {
         seat.classList.add('selected');
       }
     });
+
   }
 
   const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
@@ -113,9 +114,15 @@ function populateUI() {
   setMovieData(movieSelect.selectedIndex, movieSelect.value);
 
   const rows = document.getElementsByClassName("row")
-  for(let row of rows ){
-    let seattt  = row.children;
-    console.log(seattt.classList);
+  let rownr = 0;
+  let seatnr = 0;
+  for (let row of rows){
+    seatnr = 0;
+    rownr ++;
+    for(let seat of row.children){
+      seatnr++;
+      seat.classList.add("Row:"+rownr +"_SEAT:" + seatnr)
+    }
   }
 }
 
@@ -153,9 +160,10 @@ container.addEventListener('mouseover', e => {
   for (let tool of tooltiptext) {
       for(let row of rows ){
       }
-
-      if (e.target.classList.length > 3){
-      tool.innerText =e.target.classList.item(3);
+      let rownr = 0;
+      rownr ++;
+      if (e.target.classList.length > 4){
+      tool.innerText =e.target.classList.item(4) +"__"+e.target.classList.item(2);
     }
       else{
         tool.innerText ="";
