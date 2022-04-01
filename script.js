@@ -4,7 +4,7 @@ const count = document.getElementById('count');
 const total = document.getElementById('total');
 const movieSelect = document.getElementById('movie');
 
-var dbb = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024); 
+let dbb = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
 
 dbb.transaction(function (tx) { 
    tx.executeSql('CREATE TABLE IF NOT EXISTS SEAT (seat_nr unique)');
@@ -28,7 +28,7 @@ function updateSelectedCount() {
 
   const seatsIndex = [...selectedSeats].map(seat => [...seats].indexOf(seat));
 
-var L1 = 44;
+let L1 = 44;
   dbb.transaction(function (tx) { 
     tx.executeSql('DROP TABLE SEAT;');
     tx.executeSql('CREATE TABLE IF NOT EXISTS SEAT (seat_nr unique)');
