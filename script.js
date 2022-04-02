@@ -26,23 +26,23 @@ function setMovieData(movieIndex, moviePrice) {
 // Update total and count
 function updateSelectedCount() {
   const selectedSeats = document.querySelectorAll('.row .seat.selected');
-    
-  
+  const reservedSeats = document.querySelectorAll('.row .seat.reserved');
+  const name = document.querySelectorAll('.row .seat');
 
   const seatsIndex = [...selectedSeats].map(seat => [...seats].indexOf(seat));
-
-let L1 = 44;
-  dbb.transaction(function (tx) { 
-    tx.executeSql('DROP TABLE SEAT;');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS SEAT (seat_nr unique)');
-    seatsIndex.forEach(function (item, index) {
-    L1 = item;
-    tx.executeSql('INSERT INTO SEAT (seat_nr)  VALUES (' +L1+ ')', []);
-    console.log(item, index);
-});
-});
+  const seatsresIndex = [...reservedSeats].map(seat => [...seats].indexOf(seat));
+const resname = [];
+  for(x of seatsresIndex){
+    resname.push(seats[x].classList.item(4));
+}
 
   localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
+  localStorage.setItem('reservedSeats', JSON.stringify(seatsresIndex));
+  localStorage.setItem('reservednameSeats', JSON.stringify(resname));
+
+
+
+
 
   const selectedSeatsCount = selectedSeats.length;
 
@@ -89,29 +89,11 @@ function populateUI() {
          }); 
     */
     const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
-    console.log(selectedSeats);
-        
+    const reservedSeats = JSON.parse(localStorage.getItem('reservedSeats'));
+  const namereservedSeats = JSON.parse(localStorage.getItem('reservednameSeats'));
 
-        
+  console.log(selectedSeats);
 
-  if (selectedSeats !== null && selectedSeats.length > 0) {
-    seats.forEach((seat, index) => {
-
-
-      if (selectedSeats.indexOf(index) > -1) {
-
-        seat.classList.add('selected');
-      }
-    });
-
-  }
-
-  const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
-
-  if (selectedMovieIndex !== null) {
-    movieSelect.selectedIndex = selectedMovieIndex;
-  }
-  setMovieData(movieSelect.selectedIndex, movieSelect.value);
 
   const rows = document.getElementsByClassName("row")
   let rownr = 0;
@@ -124,6 +106,29 @@ function populateUI() {
       seat.classList.add("Row:"+rownr +"_SEAT:" + seatnr)
     }
   }
+
+  if (selectedSeats !== null && selectedSeats.length > 0) {
+    seats.forEach((seat, index) => {
+
+      if (selectedSeats.indexOf(index) > -1) {
+        seat.classList.add('selected');
+      }
+      if (reservedSeats.indexOf(index) > -1) {
+        seat.classList.add('reserved');
+        seat.classList.add(namereservedSeats[reservedSeats.indexOf(index)])
+      }
+    });
+
+  }
+
+  const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
+
+  if (selectedMovieIndex !== null) {
+    movieSelect.selectedIndex = selectedMovieIndex;
+  }
+  setMovieData(movieSelect.selectedIndex, movieSelect.value);
+
+
 }
 
 // Movie select event
@@ -144,10 +149,9 @@ container.addEventListener('click', e => {
       console.log("SELECTED!");
   }
   if (
-      e.target.classList.contains('reserved') &&
-      !e.target.classList.contains('occupied')
+      e.target.classList.contains('reserved')
   ) {
-    e.target.classList.toggle(e.target.classList.item(2))
+    e.target.classList.toggle(e.target.classList.item(3))
     e.target.classList.toggle('reserved');
     updateSelectedCount();
     console.log("Reservation undo!");
@@ -163,7 +167,7 @@ container.addEventListener('mouseover', e => {
       let rownr = 0;
       rownr ++;
       if (e.target.classList.length > 4){
-      tool.innerText =e.target.classList.item(4) +"__"+e.target.classList.item(2);
+      tool.innerText =e.target.classList.item(4) +"__"+e.target.classList.item(1);
     }
       else{
         tool.innerText ="";
