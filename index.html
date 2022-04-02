@@ -381,11 +381,21 @@
 		<div class="seat"></div>
         <span class="tooltiptext">Tooltip text</span>
       </div>
+      <div style="display: flex;">
+
       <form>
         <label for="lname">Reservation</label><br>
         <input type="text" id="lname" name="lname">
         <button type="button" onclick="booking()">book!</button>
       </form>
+      <form style="margin-left:100px ">
+        <label for="search">Search</label><br>
+        <input type="text" id="search" name="search">
+        <button type="button" onclick="namesearch()">Search Reservation</button>
+      </form>
+      </div>
+      <span class="resname" style = "margin-left: 350px" ></span>
+
 
     </div>
 

@@ -64,10 +64,22 @@ function booking(){
     }
 
   });
-
   updateSelectedCount();
-
 }
+function namesearch(){
+  const resname =  document.getElementsByClassName("resname");
+
+  const searchname =  document.getElementById("search").value;
+  const reservedSeats = document.querySelectorAll('.row .seat.reserved');
+  let strin = ""
+  seatsFree.forEach((seat, index) => {
+    if (seat.classList.contains(searchname)) {
+      console.log(searchname, seat.classList.item(1) + "RESERVE !")
+      strin = strin +searchname + ":"+ seat.classList.item(1);
+      resname[0].innerText= strin;
+    }
+  });
+  }
 
 // Get data from localstorage and populate UI
 function populateUI() {
