@@ -8,8 +8,8 @@ let moviename = "";
 let shownr;
 let ticketPrice;
 let movienow;
-let rowarray =["P","O","N", "M", "L", "K", "J", "I", "H", "G", "A", "B", "C", "D", "E", "F"]
-
+let rowarray = ["P", "O", "N", "M", "L", "K", "J", "I", "H", "G", "A", "B", "C", "D", "E", "F"]
+let newDB;
 const rows = document.getElementsByClassName("row")
 let dbb = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
 // init();
@@ -75,7 +75,6 @@ function updateSelectedCount() {
 
     dbb.transaction(function (tx) {
         tx.executeSql('SELECT * FROM SEAT WHERE status= "reserved"', [], function (tx, results) {
-            console.log(results.rows);
         })
     });
 
@@ -88,34 +87,116 @@ function updateSelectedCount() {
 }
 
 function booking() {
-    const lname = document.getElementById("lname").value;
+    const lname = document.getElementById("lname");
+    let ln = lname.value;
     const seatsFree = document.querySelectorAll('.row .seat:not(.reserved)');
     seatsFree.forEach((seat, index) => {
         if (seat.classList.contains('selected')) {
             console.log(seat, index + "RESERVE !")
             seat.classList.toggle("reserved");
-            let replaced = lname.replaceAll(' ', '_');
+            let replaced = ln.replaceAll(' ', '_');
             seat.classList.add(replaced);
-            if (moviename == "Fr BEAST (35CHF)") {
-                movienow = 1;
-            } else if (moviename == "Sa BEAST (35CHF)") {
-                movienow = 2;
-            } else if (moviename == "So BEAST (35CHF)") {
-                movienow = 3;
-            }
-            seat.classList.add(movieSelect.selectedIndex+1);
-            console.log(lname);
+            seat.classList.add(movieSelect.selectedIndex + 1);
+            console.log(lname.value);
+            lname.value = "";
         }
-        dbb.transaction(function (tx) {
-            tx.executeSql('UPDATE SEAT SET ContactName = "Alfred Schmidt", City= "Frankfurt" WHERE CustomerID = 1;');
-        }, function () {
-            console.log("SQLERROR");
-        }, function () {
-            console.log("SQLFAIL");
-        });
     });
     updateSelectedCount();
 }
+
+function dbupdate() {
+    dbb.readTransaction(function (tx) {
+        let rs = "";
+        for (const [key, si] of Object.entries(sig)) {
+            let stat = si.status;
+            if (si.reservation_name == "zz") {
+                rs = "";
+            } else {
+                rs = si.reservation_name
+                tx.executeSql('UPDATE SEAT SET reservation_name = ?, status= ? WHERE shows = ? AND seat_nr =? AND row= ?', [rs, stat, si.shows, si.seat_nr, si.row]);
+            }
+        }
+    }, function (x) {
+        console.log("SQL UPLOAD ERROR" + x.message);
+    }, function () {
+        console.log("SQL success");
+        console.log("All done");
+        //Convert to JSON
+    });
+}
+
+function upload() {
+    document.getElementById('import').onclick = function () {
+        var files = document.getElementById('selectFiles').files;
+        console.log(files);
+        if (files.length <= 0) {
+            return false;
+        }
+
+        var fr = new FileReader();
+
+        fr.onload = function (e) {
+            init();
+            console.log(e);
+            var result = JSON.parse(e.target.result);
+            var formatted = JSON.stringify(result, null, 2);
+            var sig = JSON.parse(result);
+
+            dbb.transaction(function (tx) {
+                let rs = "";
+                for (const [key, si] of Object.entries(sig)) {
+                    let stat = si.status;
+                    if (si.reservation_name == "zz") {
+                        rs = "";
+                    } else {
+                        rs = si.reservation_name
+                        tx.executeSql('UPDATE SEAT SET reservation_name = upper(?), status= ? WHERE shows = ? AND seat_nr =? AND row= ?', [rs, stat, si.shows, si.seat_nr, si.row]);
+                    }
+                }
+            }, function (x) {
+                console.log("SQL ERROR" + x.message);
+            }, function () {
+                console.log("SQL success");
+                updateSelectedCount();
+                readDB();
+            });
+        }
+        fr.readAsText(files.item(0));
+
+
+    };
+}
+
+function downlaodDB() {
+    dbb.readTransaction(function (tx) {
+        tx.executeSql('SELECT * FROM SEAT', [], function (tx, results) {
+            var data = results.rows;
+            var serializedData = JSON.stringify(data);
+            let test = JSON.parse(serializedData);
+            console.log(serializedData);
+            console.dir(data);
+            download(JSON.stringify(serializedData), "BOOKING_BACKUP.json", "application/json");
+        });
+    }, function (x) {
+        console.log("SQL ERROR" + x.message);
+    }, function () {
+        console.log("SQL success");
+        console.log("All done");
+        //Convert to JSON
+
+
+    });
+
+}
+
+function download(content, fileName, contentType) {
+    const a = document.createElement("a");
+    const file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
 
 function namesearch() {
 
@@ -135,16 +216,15 @@ function namesearch() {
     // });
     dbb.transaction(function (tx) {
         tx.executeSql('SELECT * FROM SEAT WHERE reservation_name= upper(?)', [searchname.value], function (tx, results) {
-            console.log(results);
-            for(let i of results.rows){
-                strin += i.row + ":"+ i.seat_nr+ ", "
+            for (let i of results.rows) {
+                strin += i.row + ":" + i.seat_nr + ", "
                 show = i.shows
             }
-            if(results.rows.length>0){
+            if (results.rows.length > 0) {
                 strin += "show: " + show;
                 resname[0].innerText = strin;
-                searchname.value= "";
-            }else{
+                searchname.value = "";
+            } else {
                 resname[0].innerText = "Not Found";
             }
 
@@ -190,10 +270,12 @@ function populateUI() {
         for (let seat of row.children) {
             id++;
             seatnr++;
-            seat.classList.add(rowarray[rownr-1] + ":" + seatnr)
+            if (seatnr > 1) {
+                seat.classList.add(rowarray[rownr - 1] + ":" + (seatnr - 1))
+                console.log(seat);
+            }
         }
     }
-
 
 
     // if (selectedSeats !== null && selectedSeats.length > 0) {
@@ -219,9 +301,10 @@ function populateUI() {
     }
     setMovieData(movieSelect.selectedIndex, movieSelect.value);
     readDB();
-
+    upload();
 }
-function init(){
+
+function init() {
     const rows = document.getElementsByClassName("row")
 
     dbb.transaction(function s(tx) {
@@ -236,55 +319,64 @@ function init(){
                 seatnr = 0;
                 rownr++;
                 for (let seat of row.children) {
-                    id++;
-                    seatnr++;
-                    tx.executeSql('INSERT INTO SEAT (shows, seat_nr , row,   reservation_name, status) VALUES (?,?,?,?,? )', [i + 1, seatnr, rowarray[rownr-1], "zz", ""]);
-                    // tx.executeSql('INSERT INTO SEAT (shows, seat_nr , row,   reservation_name, status) VALUES (?,?,?,?,? )',[i+1 ,seatnr,rownr, seat.classList.item(4),seat.classList.item(3)] );
+                    if(seat.classList.item(0) == "seat"){
+                        if(seat.classList.length>2 && !seat.classList.contains("occupied")){
+                            console.log("LL")
+                            let len = seat.classList.length;
+                            for(let i = 0; i <= len-3; i++){
+                                seat.classList.toggle(seat.classList.item(2))
+                            }
+                        }
+                        id++;
+                        seatnr++;
+                        tx.executeSql('INSERT INTO SEAT (shows, seat_nr , row,   reservation_name, status) VALUES (?,?,?,?,? )', [i + 1, seatnr, rowarray[rownr - 1], "zz", ""]);
+                        // tx.executeSql('INSERT INTO SEAT (shows, seat_nr , row,   reservation_name, status) VALUES (?,?,?,?,? )',[i+1 ,seatnr,rownr, seat.classList.item(4),seat.classList.item(3)] );
+                    }
+
                 }
             }
         }
+    }, function (x) {
+        console.log("SQL ERROR" + x.message);
+    }, function () {
+        console.log("SQL INIT success");
+        console.log("All done");
+        readDB();
+        //Convert to JSON
     });
 }
+
 function readDB() {
-    if (moviename == "Fr BEAST (35CHF)") {
-        movienow = 1;
-    } else if (moviename == "Sa BEAST (35CHF)") {
-        movienow = 2;
-    } else if (moviename == "So BEAST (35CHF)") {
-        movienow = 3;
-    }
     let resultsnr;
     dbb.transaction(function (tx) {
         tx.executeSql('SELECT * FROM SEAT WHERE status= "reserved" OR status= "taken"', [], function (tx, results) {
             resultsnr = results.rows;
-            console.log(results.rows);
-                seats.forEach((seat, index) => {
-                    for(let i of resultsnr){
-                        let l = seat.classList.item(1).split(":")
-                        if( i.seat_nr== l[1] && i.row==l[0] && i.shows == movieSelect.selectedIndex+1){
-                            console.log("KKK");
-                            seat.classList.add('selected')
-                            seat.classList.add('reserved')
-                            if(i.status == "taken"){
-                                seat.classList.add('taken')
-                            }
-                            seat.classList.add(i.reservation_name);
-                            seat.classList.add(i.shows);
+            seats.forEach((seat, index) => {
+                for (let i of resultsnr) {
+                    let l = seat.classList.item(1).split(":")
+                    if (i.seat_nr == l[1] && i.row == l[0] && i.shows == movieSelect.selectedIndex + 1) {
+                        console.log("KKK");
+                        seat.classList.add('selected')
+                        seat.classList.add('reserved')
+                        if (i.status == "taken") {
+                            seat.classList.add('taken')
                         }
-                    else if (seat.classList.contains('selected') && !seat.classList.contains('reserved')) {
-                            seat.classList.toggle('selected')
-                        }else if (seat.classList.contains('reserved') && !seat.classList.contains(movieSelect.selectedIndex+1)){
+                        seat.classList.add(i.reservation_name);
+                        seat.classList.add(i.shows);
+                    } else if (seat.classList.contains('selected') && !seat.classList.contains('reserved')) {
+                        seat.classList.toggle('selected')
+                    } else if (seat.classList.contains('reserved') && !seat.classList.contains(movieSelect.selectedIndex + 1)) {
                         let l = seat.classList.item(1).split(":");
-                            seat.classList.toggle('selected');
-                            seat.classList.toggle('reserved');
-                            if(i.status == "taken"){
-                                seat.classList.toggle('taken');
-                            }
-                            seat.classList.toggle(seat.classList.item(2));
-                            seat.classList.toggle(seat.classList.item(2));
+                        seat.classList.toggle('selected');
+                        seat.classList.toggle('reserved');
+                        if (seat.classList.contains('taken')) {
+                            seat.classList.toggle('taken');
                         }
+                        seat.classList.toggle(seat.classList.item(2));
+                        seat.classList.toggle(seat.classList.item(2));
                     }
-                });
+                }
+            });
         });
     });
 }
@@ -299,21 +391,22 @@ movieSelect.addEventListener('change', e => {
         }
         console.log(moviename);
     }
-
     readDB();
     updateSelectedCount();
+
 });
 
 // Seat click event
 container.addEventListener('contextmenu', e => {
+    e.preventDefault();
     console.log("RIGHTCLICKED")
-    let l =  e.target.classList.item(1).split(":")
+    let l = e.target.classList.item(1).split(":")
     if (e.target.classList.contains('taken')) {
         e.target.classList.toggle("taken")
         dbb.transaction(function s(tx) {
             tx.executeSql('UPDATE SEAT SET status= ? WHERE shows = ? AND seat_nr =? AND row= ?', ["reserved", parseInt(e.target.classList.item(5)), parseInt(l[1]), l[0]]);
         });
-    }else if (e.target.classList.contains('reserved')){
+    } else if (e.target.classList.contains('reserved')) {
         e.target.classList.add("taken")
         dbb.transaction(function s(tx) {
             tx.executeSql('UPDATE SEAT SET reservation_name = upper(?), status= ? WHERE shows = ? AND seat_nr =? AND row= ?', [e.target.classList.item(4), "taken", parseInt(e.target.classList.item(5)), parseInt(l[1]), l[0]]);
@@ -322,7 +415,7 @@ container.addEventListener('contextmenu', e => {
 });
 
 container.addEventListener('click', e => {
-    if(!e.target.classList.contains("taken")) {
+    if (!e.target.classList.contains("taken")) {
         if (
             e.target.classList.contains('seat') &&
             !e.target.classList.contains('occupied')
@@ -359,7 +452,10 @@ container.addEventListener('mouseover', e => {
         rownr++;
         if (e.target.classList.length > 4) {
             let l = e.target.classList.item(1).split(":")
-            tool.innerText = e.target.classList.item(4) + "  Row:" + l[0] +" Seat:"+l[1];
+            tool.innerText = e.target.classList.item(4) + "  Row:" + l[0] + " Seat:" + l[1];
+            if (e.target.classList.length > 6) {
+                tool.innerText = e.target.classList.item(5) + "  Row:" + l[0] + " Seat:" + l[1];
+            }
         } else {
             tool.innerText = "";
         }

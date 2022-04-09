@@ -61,7 +61,7 @@ body {
 }
 
 .seat.taken {
-  background-color: #26c003;
+  background-color: #8d00ff;
 }
 .tooltip {
   position: relative;
@@ -100,7 +100,10 @@ body {
   cursor: pointer;
   transform: scale(1.2);
 }
-
+.rowname{
+  margin-right: 18px;
+  -webkit-text-fill-color: #777777;
+}
 .showcase .seat:not(.occupied):hover {
   cursor: default;
   transform: scale(1);
@@ -130,15 +133,21 @@ body {
 .row {
   display: flex;
   margin-bottom: 5px;
+  margin-left: 50%;
+
 }
 .row:nth-of-type(11) {
   margin-bottom: 20px;
 }
+.rowname{
+  margin-left: 10%;
+}
 .screen {
   background-color: #fff;
   height: 70px;
-  width: 100%;
-  margin: 15px 0;
+  width: 80%;
+  margin-left: 10%;
+  margin-bottom: 50px;
   transform: rotateX(-45deg);
   box-shadow: 0 3px 10px rgba(255, 255, 255, 0.7);
 }
@@ -149,4 +158,59 @@ p.text {
 
 p.text span {
   color: #6feaf6;
+}
+.button-36 {
+  background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: "Inter UI","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  height: 2rem;
+  padding: 0 1.6rem;
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+  transition: all .5s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.button-36:hover {
+   box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+   transition-duration: .1s;
+ }
+
+.textfieldd{
+  -webkit-text-fill-color: #FFFFFF;
+  font-size: 9px;
+  color: rgba(0,0,0,.87);
+  border-bottom-color: rgba(0,0,0,.42);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: .009375em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  align-self: flex-end;
+  box-sizing: border-box;
+  width: 50%;
+  padding: 10px 16px 6px;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  border-bottom: 1px solid;
+  border-radius: 4px 4px 0 0;
+  background: #242333;
+  height: 60%;
+}
+.textfieldd:hover{
+  border-bottom-color: rgba(111,234,249,.87);
+  background: #444451;
+}
+.textfieldd:focus{
+  outline: none;
+  border-color: #6200ee;
+  border-bottom-color: rgba(111,234,249,.87);
 }
