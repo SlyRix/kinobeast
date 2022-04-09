@@ -52,11 +52,16 @@ body {
   background-color: #6feaf6;
 }
 
+
+.seat.reserved {
+  background-color: #ff8b8b;
+}
 .seat.occupied {
   background-color: #fff;
 }
-.seat.reserved {
-  background-color: #ff8b8b;
+
+.seat.taken {
+  background-color: #26c003;
 }
 .tooltip {
   position: relative;

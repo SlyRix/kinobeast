@@ -11,11 +11,11 @@
     <div class="movie-container">
       <label>Movie:</label>
       <select id="movie">
-        <option value="25">BEAST (25CHF)</option>
-
+        <option value="35" class="fr">Fr BEAST (35CHF)</option>
+        <option value="35" class="sa">Sa BEAST (35CHF)</option>
+        <option value="35" class="so">So BEAST (35CHF)</option>
       </select>
     </div>
-
     <ul class="showcase">
       <li>
         <div class="seat"></div>
@@ -26,13 +26,18 @@
         <small>Selected</small>
       </li>
       <li>
+        <div class="seat reserved"></div>
+        <small>Reserved</small>
+      </li>
+      <li>
         <div class="seat occupied"></div>
         <small>Unvalable</small>
       </li>
       <li>
-        <div class="seat reserved"></div>
-        <small>Reserved</small>
+        <div class="seat taken"></div>
+        <small>taken</small>
       </li>
+
     </ul>
 
     <div class="container">
