@@ -15,6 +15,10 @@ body {
   font-family: 'Lato', sans-serif;
   margin: 0;
 }
+.myTable{
+  border:1px  #6feaf6;
+
+}
 
 .movie-container {
   margin: 20px 0;

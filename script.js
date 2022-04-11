@@ -234,6 +234,25 @@ function namesearch() {
 
 }
 
+function pickUp() {
+    const resname = document.getElementsByClassName("resname");
+
+    if (!resname[0].innerText == "Not Found" || !resname[0].innerText == "") {
+        let search = resname[0].innerText;
+        search = search.split("=");
+        search = search[0].replaceAll(' ', '');
+        dbb.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM SEAT WHERE reservation_name= upper(?)', [search], function (tx, results) {
+                for (let row of results.rows){
+                    tx.executeSql('UPDATE SEAT SET status= ? WHERE shows = ? AND seat_nr =? AND row= ?', ["taken", row.shows, row.seat_nr,row.row]);
+                }
+            });
+        });
+
+    }
+    readDB();
+}
+
 // Get data from localstorage and populate UI
 function populateUI() {
 
@@ -319,11 +338,11 @@ function init() {
                 seatnr = 0;
                 rownr++;
                 for (let seat of row.children) {
-                    if(seat.classList.item(0) == "seat"){
-                        if(seat.classList.length>2 && !seat.classList.contains("occupied")){
+                    if (seat.classList.item(0) == "seat") {
+                        if (seat.classList.length > 2 && !seat.classList.contains("occupied")) {
                             console.log("LL")
                             let len = seat.classList.length;
-                            for(let i = 0; i <= len-3; i++){
+                            for (let i = 0; i <= len - 3; i++) {
                                 seat.classList.toggle(seat.classList.item(2))
                             }
                         }
@@ -400,7 +419,8 @@ movieSelect.addEventListener('change', e => {
 container.addEventListener('contextmenu', e => {
     e.preventDefault();
     console.log("RIGHTCLICKED")
-    let l = e.target.classList.item(1).split(":")
+    let l = e.target.classList.item(1)
+    l = l.split(":");
     if (e.target.classList.contains('taken')) {
         e.target.classList.toggle("taken")
         dbb.transaction(function s(tx) {

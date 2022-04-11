@@ -8,14 +8,8 @@
   <title>Movie Seat Booking</title>
 </head>
 <body>
-<div class="movie-container">
-  <label>Movie:</label>
-  <select id="movie">
-    <option value="35" class="fr">Fr BEAST (35CHF)</option>
-    <option value="35" class="sa">Sa BEAST (35CHF)</option>
-    <option value="35" class="so">So BEAST (35CHF)</option>
-  </select>
-</div>
+<div style="display: flex">
+<div style="flex: 1;">
 <ul class="showcase">
   <li>
     <div class="seat"></div>
@@ -42,7 +36,14 @@
 
 <div class="container">
   <div class="screen"></div>
-
+  <div class="movie-container">
+    <label>Movie:</label>
+    <select id="movie">
+      <option value="35" class="fr">Fr BEAST (35CHF)</option>
+      <option value="35" class="sa">Sa BEAST (35CHF)</option>
+      <option value="35" class="so">So BEAST (35CHF)</option>
+    </select>
+  </div>
   <div class="row"style="margin-left: 140px">
     <span class="rowname">P</span>
     <div class="seat"></div>
@@ -411,17 +412,18 @@
       <input class= "textfieldd" type="text" id="lname" name="lname">
       <button class = "button-36" type="button" onclick="booking()">book!</button>
     </form>
+    <div style="display: flex;">
     <form style="margin-left:10px ">
       <label for="search">Search</label><br>
       <input class= "textfieldd"type="text" id="search" name="search">
-      <button class = "button-36" type="button" onclick="namesearch()">Search Reservation</button>
+
+      <button class = "button-36" type="button" onclick="namesearch()">Search</button>
+      <button class = "button-36" type="button" onclick="pickUp()">Picked</button>
+      </div>
     </form>
-
     <button type="button" class = "button-36"onclick="init() "hidden>db_init</button>
-
   </div>
-
-  <div style="display: flex;margin-left:25%; margin-top: 10px">
+  <div style="display: flex;margin-left:25%; margin-top: 30px">
     <input class = "files" type="file" id="selectFiles" value="Import" /><br />
     <button id = "import" type="file" class = "button-36" onclick="upload()">upload</button>
   </div>
@@ -434,7 +436,26 @@
 >0</span
 >
 </p>
-
+</div>
+<div style="flex: 1;">
+  <table id="myTable">
+    <tr>
+      <td>Row1 cell1</td>
+      <td>Row1 cell2</td>
+    </tr>
+    <tr>
+      <td>Row2 cell1</td>
+      <td>Row2 cell2</td>
+    </tr>
+    <tr>
+      <td>Row3 cell1</td>
+      <td>Row3 cell2</td>
+    </tr>
+  </table>
+</div>
+</div>
 <script src="script.js"></script>
+
+
 </body>
 </html>
