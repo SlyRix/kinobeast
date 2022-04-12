@@ -71,6 +71,7 @@ function updateSelectedCount() {
         console.log("SQL ERROR" + x.message);
     }, function () {
         console.log("SQL success");
+        myCreateFunction()
     });
 
     dbb.transaction(function (tx) {
@@ -104,6 +105,7 @@ function booking() {
     updateSelectedCount();
 }
 
+
 function dbupdate() {
     dbb.readTransaction(function (tx) {
         let rs = "";
@@ -123,6 +125,97 @@ function dbupdate() {
         console.log("All done");
         //Convert to JSON
     });
+}
+Array.prototype.insert = function ( index, item ) {
+    this.splice( index, 0, item );
+};
+function myCreateFunction() {
+    var tablee = document.getElementById("myTable");
+    for (let i = tablee.rows.length; i > 1; i--){
+        tablee.deleteRow(1);
+    }
+    dbb.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM SEAT WHERE NOT reservation_name= "zz" AND shows = ? ', [movieSelect.selectedIndex +1], function (tx, results) {
+            for (let res of results.rows){
+                var table = document.getElementById("myTable");
+                var t = table.rows.length;
+                var row = [];
+                row.insert(0,table.insertRow(table.rows.length));
+                var cell1 = row[0].insertCell(0);
+                var cell2 = row[0].insertCell(1);
+                var cell3 = row[0].insertCell(2);
+                var cell4 = row[0].insertCell(3);
+                var cell5 = row[0].insertCell(4);
+                cell1.innerHTML = res.row;
+                cell2.innerHTML = res.seat_nr;
+                cell3.innerHTML = res.reservation_name;
+                cell4.innerHTML = res.status
+                cell5.innerHTML = res.shows;
+                row[0].onclick = function(){
+                    row.classList.toggle("sel")
+                    console.log("sel")
+                };
+            }
+        });
+    });
+}
+
+function myDeleteFunction() {
+    document.getElementById("myTable").deleteRow(0);
+}
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("myTable");
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount ++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
 }
 
 function upload() {
@@ -243,8 +336,8 @@ function pickUp() {
         search = search[0].replaceAll(' ', '');
         dbb.transaction(function (tx) {
             tx.executeSql('SELECT * FROM SEAT WHERE reservation_name= upper(?)', [search], function (tx, results) {
-                for (let row of results.rows){
-                    tx.executeSql('UPDATE SEAT SET status= ? WHERE shows = ? AND seat_nr =? AND row= ?', ["taken", row.shows, row.seat_nr,row.row]);
+                for (let row of results.rows) {
+                    tx.executeSql('UPDATE SEAT SET status= ? WHERE shows = ? AND seat_nr =? AND row= ?', ["taken", row.shows, row.seat_nr, row.row]);
                 }
             });
         });
@@ -398,6 +491,7 @@ function readDB() {
             });
         });
     });
+    myCreateFunction();
 }
 
 // Movie select event

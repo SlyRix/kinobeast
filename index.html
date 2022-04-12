@@ -437,19 +437,14 @@
 >
 </p>
 </div>
-<div style="flex: 1;">
-  <table id="myTable">
+<div class="tableDiv">
+  <table id="myTable" class="tablee" style="overflow-y:auto;">
     <tr>
-      <td>Row1 cell1</td>
-      <td>Row1 cell2</td>
-    </tr>
-    <tr>
-      <td>Row2 cell1</td>
-      <td>Row2 cell2</td>
-    </tr>
-    <tr>
-      <td>Row3 cell1</td>
-      <td>Row3 cell2</td>
+      <td onclick="sortTable(0)">Row</td>
+      <td onclick="sortTable(1)">Seat</td>
+      <td onclick="sortTable(2)">Reservation</td>
+      <td onclick="sortTable(3)">Status</td>
+      <td onclick="sortTable(4)">Show</td>
     </tr>
   </table>
 </div>

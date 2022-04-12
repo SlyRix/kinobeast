@@ -11,14 +11,37 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   font-family: 'Lato', sans-serif;
   margin: 0;
 }
-.myTable{
-  border:1px  #6feaf6;
+th, td {
+  border: 1px solid;
+  border-collapse: collapse;
+  text-align: center;
 
 }
+tr:hover{
+  background-color: #6e6aa9;
+}
+tr.sel{
+  background-color: #39a0ea;
+
+}
+.tableDiv{
+  margin-top: 50px;
+  flex: 1;
+  height: 800px;
+  weight: 100%;
+  overflow-y:auto;
+}
+table{
+  border: 1px solid;
+  border-collapse: collapse;
+  height: 100px;
+  weight: 100%;
+  padding: 8px;
+}
+
 
 .movie-container {
   margin: 20px 0;
